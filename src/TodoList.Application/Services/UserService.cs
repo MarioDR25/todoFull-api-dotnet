@@ -1,0 +1,88 @@
+using TodoList.Application.DTOs;
+using TodoList.Application.Interfaces;
+using TodoList.Domain.Entities;
+using TodoList.Domain.Interfaces;
+
+namespace TodoList.Application.Services;
+
+public class UserService : IUserService
+{
+    private readonly IUserRepository _repository;
+
+    public UserService(IUserRepository repository)
+    {
+        _repository = repository;
+    }
+
+    public async Task<IEnumerable<UserResponseDto>> GetAllAsync()
+    {
+        var users = await _repository.GetAllUsersAsync();
+        return users.Select(MapToResponseDto);
+    }
+
+    public async Task<UserResponseDto?> GetByIdAsync(Guid id)
+    {
+        var user = await _repository.GetUserByIdAsync(id);
+        return user is null ? null : MapToResponseDto(user);
+    }
+
+    public async Task<UserResponseDto> CreateAsync(CreateUserDto createDto)
+    {
+        // Validaciones de unicidad — el servicio protege las reglas de negocio
+       /*  if (await _repository.EmailExistsAsync(createDto.Email))
+            throw new InvalidOperationException($"El email '{createDto.Email}' ya está registrado.");
+
+        if (await _repository.UsernameExistsAsync(createDto.Username))
+            throw new InvalidOperationException($"El username '{createDto.Username}' ya está en uso."); */
+
+        var user = new User
+        {
+            
+            Id = Guid.NewGuid(),  
+            Username = createDto.Username.ToLower().Trim(),
+            Email = createDto.Email.ToLower().Trim(),
+            PasswordHash = Convert.ToBase64String( System.Text.Encoding.UTF8.GetBytes(createDto.Password)),
+       
+        };
+
+        var createdUser = await _repository.AddUserAsync(user);
+        return MapToResponseDto(createdUser);
+    }
+
+    public async Task<UserResponseDto?> UpdateAsync(Guid id, UpdateUserDto updateDto)
+    {
+        var user = await _repository.GetUserByIdAsync(id);
+        if (user is null) return null;
+
+        // Verificar unicidad solo si el valor cambió
+        /* if (user.Email != updateDto.Email.ToLower() &&
+            await _repository.EmailExistsAsync(updateDto.Email))
+            throw new InvalidOperationException($"El email '{updateDto.Email}' ya está registrado.");
+
+        if (user.Username != updateDto.Username.ToLower() &&
+            await _repository.UsernameExistsAsync(updateDto.Username))
+            throw new InvalidOperationException($"El username '{updateDto.Username}' ya está en uso.");
+ */
+        user.Username = updateDto.Username.ToLower().Trim();
+        user.Email = updateDto.Email.ToLower().Trim();
+
+        await _repository.UpdateUserAsync(user);
+        return MapToResponseDto(user);
+    }
+
+    public async Task<bool> DeleteAsync(Guid id)
+    {
+        if (!await _repository.UserExistsAsync(id)) return false;
+        await _repository.DeleteUserAsync(id);
+        return true;
+    }
+
+    private static UserResponseDto MapToResponseDto(User user) => new()
+    {
+        Id = user.Id,
+        Username = user.Username,
+        Email = user.Email,
+        CreatedAt = user.CreatedAt,
+        
+    };
+}
