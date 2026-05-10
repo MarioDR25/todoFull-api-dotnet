@@ -1,14 +1,49 @@
-# Credenciales locales
-**/appsettings.Development.json
+## [ Archivos de Compilación y Binarios ]
+[Bb]in/
+[Oo]bj/
+/build/
 
-# Build
-**/bin/
-**/obj/
-
-
+## [ Bases de Datos ]
+# Ignora archivos locales de SQLite o logs de MySQL si se guardan en el repo
 *.db
 *.db-shm
 *.db-wal
+*.sql
+*.sqlite
 
-# VSC
+## [ Configuración de Usuario y Herramientas ]
+.vs/
 .vscode/
+# Nota: Si trabajas solo, puedes subir .vscode/launch.json, 
+# pero generalmente se ignora para no chocar con otros devs.
+.idea/
+*.suo
+*.user
+*.userossc
+*.sln.docstates
+
+## [ Secretos y Variables de Entorno ]
+# ¡IMPORTANTE! Nunca subas tus contraseñas de MySQL
+appsettings.Development.json
+secrets.json
+.env
+
+## [ Paquetes y Caché ]
+*.nuget.props
+*.nuget.targets
+project.lock.json
+project.assets.json
+.nuget/
+
+## [ Sistema Operativo ]
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+# Mac
+.DS_Store
+
+## [ Logs y Reportes ]
+*.log
+TestResults/
+/TestResults/
