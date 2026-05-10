@@ -5,14 +5,9 @@ using TodoList.Domain.Interfaces;
 
 namespace TodoList.Application.Services;
 
-public class UserService : IUserService
+public class UserService(IUserRepository repository) : IUserService
 {
-    private readonly IUserRepository _repository;
-
-    public UserService(IUserRepository repository)
-    {
-        _repository = repository;
-    }
+    private readonly IUserRepository _repository = repository;
 
     public async Task<IEnumerable<UserResponseDto>> GetAllAsync()
     {

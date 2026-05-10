@@ -5,15 +5,10 @@ using TodoList.Application.Interfaces;
 namespace TodoList.Api.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
-public class UsersController : ControllerBase
+[Route("todos/[controller]")]
+public class UsersController(IUserService service) : ControllerBase
 {
-    private readonly IUserService _service;
-
-    public UsersController(IUserService service)
-    {
-        _service = service;
-    }
+    private readonly IUserService _service = service;
 
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<UserResponseDto>), StatusCodes.Status200OK)]

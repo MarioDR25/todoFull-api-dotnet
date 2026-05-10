@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using TodoList.Application.DTOs;
 using TodoList.Application.Interfaces;
@@ -5,22 +6,17 @@ using TodoList.Application.Interfaces;
 namespace TodoList.Api.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
-public class TodoItemsController : ControllerBase
+[Route("todos/user/[controller]")]
+public class TodoItemsController(ITodoItemService service) : ControllerBase
 {
-    private readonly ITodoItemService _service;
+    private readonly ITodoItemService _service = service;
 
-    public TodoItemsController(ITodoItemService service)
-    {
-        _service = service;
-    }
 
-    
     /// GET api/todoitems?userId={guid}
     /// Las tareas siempre se filtran por usuario.
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<TodoItemResponseDto>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<TodoItemResponseDto>>> GetAll([FromQuery] Guid userId)
+    public async Task<ActionResult<IEnumerable<TodoItemResponseDto>>> GetAll([FromQuery][Required] Guid userId)
     {
         var items = await _service.GetAllByUserIdAsync(userId);
         return Ok(items);
@@ -30,7 +26,7 @@ public class TodoItemsController : ControllerBase
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(TodoItemResponseDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<TodoItemResponseDto>> GetById(int id, [FromQuery] Guid userId)
+    public async Task<ActionResult<TodoItemResponseDto>> GetById(int id, [FromQuery][Required] Guid userId)
     {
         var item = await _service.GetByIdAsync(id, userId);
         if (item is null)
@@ -64,7 +60,7 @@ public class TodoItemsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<TodoItemResponseDto>> Update(
         int id,
-        [FromQuery] Guid userId,
+        [FromQuery][Required] Guid userId,
         [FromBody] UpdateTodoItemDto updateDto)
     {
         var updatedItem = await _service.UpdateAsync(id, userId, updateDto);
@@ -77,7 +73,7 @@ public class TodoItemsController : ControllerBase
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Delete(int id, [FromQuery] Guid userId)
+    public async Task<IActionResult> Delete(int id, [FromQuery][Required] Guid userId)
     {
         var deleted = await _service.DeleteAsync(id, userId);
         if (!deleted)

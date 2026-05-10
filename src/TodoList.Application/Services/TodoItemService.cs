@@ -5,18 +5,10 @@ using TodoList.Domain.Interfaces;
 
 namespace TodoList.Application.Services;
 
-public class TodoItemService : ITodoItemService
+public class TodoItemService( ITodoItemRepository repository, IUserRepository userRepository) : ITodoItemService
 {
-    private readonly ITodoItemRepository _repository;
-    private readonly IUserRepository _userRepository;
-
-    public TodoItemService(
-        ITodoItemRepository repository,
-        IUserRepository userRepository)
-    {
-        _repository = repository;
-        _userRepository = userRepository;
-    }
+    private readonly ITodoItemRepository _repository = repository;
+    private readonly IUserRepository _userRepository = userRepository;
 
     public async Task<IEnumerable<TodoItemResponseDto>> GetAllByUserIdAsync(Guid userId)
     {
