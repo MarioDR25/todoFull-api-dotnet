@@ -42,7 +42,7 @@ dotnet run --project src/TodoList.Api
 Esta API utiliza Scalar para una experiencia de documentación interactiva y moderna. Una vez que la aplicación esté corriendo, puedes acceder a la interfaz de pruebas en:
 
 🔗 URL: http://localhost:XXXX/scalar/v1
-(Reemplaza XXXX por el puerto que asigne .NET, usualmente 5000 o 7000)
+(Reemplaza XXXX por el puerto que asigne .NET)
 
 Características de Scalar en este proyecto:
 Pruebas en vivo: Prueba cada endpoint directamente desde el navegador.
