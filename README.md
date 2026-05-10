@@ -1,4 +1,4 @@
-# TodoList API - .NET 9
+# TodoList API 
 
 Una API robusta y escalable construida con **ASP.NET Core 9**, siguiendo los principios de **Arquitectura Limpia (Clean Architecture)** y utilizando **MySQL** como motor de base de datos.
 
