@@ -8,26 +8,28 @@ using TodoList.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 
+// ── CONTROLADORES ────────────────────────────────────────────────
 builder.Services.AddControllers();
 
+// ── BASE DE DATOS — SQLite ───────────────────────────────────────
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException(
         "No se encontró la cadena de conexión 'DefaultConnection' en appsettings.json");
 
 
 builder.Services.AddDbContext<AppDbContext>( options => 
+    options.UseSqlite(connectionString));
+
+
+   /* Conexion con MySql
    options.UseMySql(
         connectionString,
-        // ServerVersion.AutoDetect conecta a MySQL y detecta la versión
-        // automáticamente. Pomelo necesita esto para generar SQL compatible.
         ServerVersion.AutoDetect(connectionString),
         mySqlOptions => mySqlOptions
-            // Nombre del ensamblado donde están las migraciones
-            .MigrationsAssembly("TodoList.Infrastructure") )
+            .MigrationsAssembly("TodoList.Infrastructure") ) */
 
-);
+
 
 // Repositorios
 builder.Services.AddScoped<ITodoItemRepository, TodoItemRepository>();
@@ -46,7 +48,7 @@ builder.Services.AddOpenApi(options =>
         {
             Title = "TodoList API",
             Version = "v1",
-            Description = "CRUD profesional con Clean Architecture — Portafolio"
+            Description = "CRUD de tareas, con arquitectura de capas"
         };
         return Task.CompletedTask;
     });
@@ -63,7 +65,6 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference(options =>
     {
         options.Title = "TodoList API";
-        // Tema visual — opciones: Default, Moon, Purple, Solarized, BluePlanet, etc.
         options.Theme = ScalarTheme.Moon;
         options.DefaultHttpClient = new(ScalarTarget.CSharp, ScalarClient.HttpClient);
     });
@@ -74,5 +75,13 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.Migrate();
+}
+
+app.MapGet("/", () => Results.Redirect("/scalar/v1"));
 
 app.Run();

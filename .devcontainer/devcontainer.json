@@ -1,0 +1,16 @@
+{
+  "name": "C# (.NET) Project",
+  "image": "mcr.microsoft.com/devcontainers/dotnet:9.0",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-dotnettools.csdevkit",
+        "ms-dotnettools.csharp",
+        "qwtel.sqlite-viewer"
+      ]
+    }
+  },
+  "forwardPorts": [5242],
+  "postCreateCommand": "dotnet restore",
+  "postStartCommand": "dotnet watch run --project src/TodoList.Api"
+}

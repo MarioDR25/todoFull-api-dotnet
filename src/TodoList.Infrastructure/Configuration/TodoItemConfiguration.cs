@@ -15,28 +15,25 @@ public class TodoItemConfiguration : IEntityTypeConfiguration<TodoItem>
         builder.Property(e => e.Id)
                .ValueGeneratedOnAdd();
 
+
         builder.Property(t => t.Title)
                .IsRequired()
-               .HasMaxLength(20)
-               .HasCharSet("utf8mb4");
+               .HasMaxLength(20);
 
         builder.Property(t => t.Description)
-               .HasMaxLength(200)
-               .HasCharSet("utf8mb4");
+               .HasMaxLength(200);
 
         builder.Property(t => t.IsCompleted)
                .IsRequired()
                .HasDefaultValue(false);
 
         builder.Property(t => t.CreatedAt)
-               .IsRequired()
-               .HasColumnType("datetime(6)");
+               .IsRequired();
 
         builder.HasOne(t => t.User)
             .WithMany(u => u.TodoItems)
             .HasForeignKey(t => t.UserId)
-            .OnDelete(DeleteBehavior.Cascade)
-            .IsRequired();
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasIndex(t => t.UserId)
                .HasDatabaseName("IX_TodoItems_UserId");

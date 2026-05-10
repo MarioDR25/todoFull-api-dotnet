@@ -5,11 +5,7 @@
 
 ## [ Bases de Datos ]
 # Ignora archivos locales de SQLite o logs de MySQL si se guardan en el repo
-*.db
-*.db-shm
-*.db-wal
-*.sql
-*.sqlite
+
 
 ## [ Configuración de Usuario y Herramientas ]
 .vs/

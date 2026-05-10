@@ -13,27 +13,22 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.HasKey(e => e.Id);
 
         builder.Property(e => e.Id)
-               .HasColumnType("char(36)")
                .ValueGeneratedOnAdd();
 
         builder.Property(e => e.Username)
                .IsRequired()
-               .HasMaxLength(50)
-               .HasCharSet("utf8mb4");
+               .HasMaxLength(50);
 
         builder.Property(e => e.Email)
                .IsRequired()
-               .HasMaxLength(255)
-               .HasCharSet("utf8mb4");
+               .HasMaxLength(255);
 
         builder.Property(e => e.PasswordHash)
                .IsRequired()
-               .HasMaxLength(500)
-               .HasCharSet("utf8mb4");
+               .HasMaxLength(500);
 
         builder.Property(e => e.CreatedAt)
-               .IsRequired()
-               .HasColumnType("datetime(6)");
+               .IsRequired();
 
 
         // Índices únicos
