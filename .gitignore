@@ -1,0 +1,14 @@
+# Credenciales locales
+**/appsettings.Development.json
+
+# Build
+**/bin/
+**/obj/
+
+
+*.db
+*.db-shm
+*.db-wal
+
+# VSC
+.vscode/
