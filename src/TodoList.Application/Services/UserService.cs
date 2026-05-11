@@ -23,13 +23,7 @@ public class UserService(IUserRepository repository) : IUserService
 
     public async Task<UserResponseDto> CreateAsync(CreateUserDto createDto)
     {
-        // Validaciones de unicidad — el servicio protege las reglas de negocio
-       /*  if (await _repository.EmailExistsAsync(createDto.Email))
-            throw new InvalidOperationException($"El email '{createDto.Email}' ya está registrado.");
-
-        if (await _repository.UsernameExistsAsync(createDto.Username))
-            throw new InvalidOperationException($"El username '{createDto.Username}' ya está en uso."); */
-
+        
         var user = new User
         {
             
@@ -48,16 +42,6 @@ public class UserService(IUserRepository repository) : IUserService
     {
         var user = await _repository.GetUserByIdAsync(id);
         if (user is null) return null;
-
-        // Verificar unicidad solo si el valor cambió
-        /* if (user.Email != updateDto.Email.ToLower() &&
-            await _repository.EmailExistsAsync(updateDto.Email))
-            throw new InvalidOperationException($"El email '{updateDto.Email}' ya está registrado.");
-
-        if (user.Username != updateDto.Username.ToLower() &&
-            await _repository.UsernameExistsAsync(updateDto.Username))
-            throw new InvalidOperationException($"El username '{updateDto.Username}' ya está en uso.");
- */
         user.Username = updateDto.Username.ToLower().Trim();
         user.Email = updateDto.Email.ToLower().Trim();
 
