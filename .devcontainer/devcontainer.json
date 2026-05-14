@@ -11,6 +11,6 @@
     }
   },
   "forwardPorts": [5242],
-  "postCreateCommand": "dotnet restore",
-  "postStartCommand": "dotnet watch run --project src/TodoList.Api"
+  "postCreateCommand": "dotnet restore"
+ 
 }
