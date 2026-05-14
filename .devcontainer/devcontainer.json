@@ -4,13 +4,12 @@
   "customizations": {
     "vscode": {
       "extensions": [
-        "ms-dotnettools.csdevkit",
-        "ms-dotnettools.csharp",
+        "ms-dotnettools.csharp", 
         "qwtel.sqlite-viewer"
       ]
     }
   },
   "forwardPorts": [5242],
-  "postCreateCommand": "dotnet restore"
- 
+  "postCreateCommand": "dotnet tool install --global dotnet-ef && export PATH=\"$PATH:$HOME/.dotnet/tools\" && dotnet restore",
+  "postStartCommand": "export PATH=\"$PATH:$HOME/.dotnet/tools\""
 }

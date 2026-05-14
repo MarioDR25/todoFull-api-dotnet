@@ -81,6 +81,12 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.Migrate();
 }
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<AppDbContext>();
+    context.Database.Migrate(); // Esto aplica las migraciones automáticamente
+}
 
 app.MapGet("/", () => Results.Redirect("/scalar/v1"));
 
