@@ -12,22 +12,23 @@ var builder = WebApplication.CreateBuilder(args);
 // ── CONTROLADORES ────────────────────────────────────────────────
 builder.Services.AddControllers();
 
-// ── BASE DE DATOS — SQLite ───────────────────────────────────────
+// ── BASE DE DATOS  ───────────────────────────────────────
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException(
         "No se encontró la cadena de conexión 'DefaultConnection' en appsettings.json");
 
 
 builder.Services.AddDbContext<AppDbContext>( options => 
-    options.UseSqlite(connectionString));
-
-
-   /* Conexion con MySql
-   options.UseMySql(
+    options.UseMySql(
         connectionString,
         ServerVersion.AutoDetect(connectionString),
         mySqlOptions => mySqlOptions
-            .MigrationsAssembly("TodoList.Infrastructure") ) */
+            .MigrationsAssembly("TodoList.Infrastructure") ));
+
+
+   /* Conexion con Sqlite
+        options.UseSqlite(connectionString))
+    */
 
 
 
