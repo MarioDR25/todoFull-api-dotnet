@@ -1,52 +1,92 @@
-# TodoList API 
+# TodoList API
 
-Una API robusta y escalable construida con **ASP.NET Core 9**, siguiendo los principios de **Arquitectura Limpia (Clean Architecture)** y utilizando **MySQL** como motor de base de datos.
+REST API built with **ASP.NET Core 9** following **Clean Architecture** principles, using **MySQL** and **JWT authentication**.
 
-## 🚀 Tecnologías utilizadas
+## Tech Stack
 
-*   **Runtime:** .NET 9
-*   **Base de Datos:** MySQL
-*   **ORM:** Entity Framework Core
-*   **Documentación:** OpenAPI / Scalar 
-*   **Patrones:** Repository Pattern, Dependency Injection, DTOs.
+| Category | Technology |
+|----------|------------|
+| Runtime | .NET 9 |
+| Database | MySQL |
+| ORM | Entity Framework Core (Pomelo) |
+| Auth | JWT Bearer + BCrypt |
+| Docs | OpenAPI / Scalar |
+| Patterns | Repository, Dependency Injection, DTOs |
 
-## 🏗️ Estructura del Proyecto
+## Project Structure
 
-El proyecto está dividido en capas para asegurar el desacoplamiento:
-*   **Domain:** Entidades de negocio e interfaces de repositorio.
-*   **Application:** Servicios, lógica de negocio y DTOs.
-*   **Infrastructure:** Implementación de repositorios, DbContext y configuraciones de MySQL.
-*   **Api:** Controladores y configuración del punto de entrada (Program.cs).
-
-## 🛠️ Configuración Local
-
-### 1. Prerrequisitos
-*   [.NET 9 SDK](https://dotnet.microsoft.com/download/dotnet/9.0)
-*   [MySQL Server](https://dev.mysql.com/downloads/installer/)
-
-### 2. Base de Datos
-Clona el repositorio y configura tu cadena de conexión en el archivo `appsettings.json` 
-```bash
-dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Server=localhost;Database=TodoListDb;Uid=tu_usuario;Pwd=tu_contraseña;"
 ```
-### 3. Ejecutar Migraciones
-Para crear las tablas en tu base de datos local, ejecuta el siguiente comando desde la raíz:
-```bash
-dotnet ef database update --project src/Infrastructure --startup-project ..\TodoList.Api\
+src/
+├── TodoList.Api/             # Controllers, extensions, configuration
+├── TodoList.Application/     # Services, DTOs, interfaces
+├── TodoList.Domain/          # Entities, repository interfaces
+└── TodoList.Infrastructure/  # DbContext, repositories, migrations
 ```
-### 4. Iniciar la API
-```bash
-dotnet run --project src/TodoList.Api
+
+## API Endpoints
+
+### Auth
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| POST | `/api/auth/register` | No | Register new user |
+| POST | `/api/auth/login` | No | Login, returns JWT |
+
+### Users
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| GET | `/api/users` | Yes | List all users |
+| GET | `/api/users/{id}` | Yes | Get user by ID |
+| PUT | `/api/users/{id}` | Yes | Update user |
+| DELETE | `/api/users/{id}` | Yes | Delete user |
+
+### Todo Items
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| GET | `/api/todoitems` | Yes | List user's tasks |
+| GET | `/api/todoitems/{id}` | Yes | Get task by ID |
+| POST | `/api/todoitems` | Yes | Create task |
+| PUT | `/api/todoitems/{id}` | Yes | Update task |
+| DELETE | `/api/todoitems/{id}` | Yes | Delete task |
+
+> Protected endpoints require header: `Authorization: Bearer <token>`
+
+## Getting Started
+
+### Prerequisites
+- [.NET 9 SDK](https://dotnet.microsoft.com/download/dotnet/9.0)
+- [MySQL Server](https://dev.mysql.com/downloads/installer/)
+
+### Setup
+
+1. **Clone and configure database connection**
+   ```bash
+   dotnet user-secrets set "ConnectionStrings:DefaultConnection" \
+     "Server=localhost;Port=3306;Database=TodoListDb;Uid=root;Pwd=your_password;"
+   ```
+
+2. **Configure JWT secrets** (optional, defaults in `appsettings.json`)
+   ```bash
+   dotnet user-secrets set "Jwt:Key" "your-secret-key-at-least-32-characters-long"
+   ```
+
+3. **Apply migrations**
+   ```bash
+   dotnet ef database update \
+     --project src/TodoList.Infrastructure \
+     --startup-project src/TodoList.Api
+   ```
+
+4. **Run the API**
+   ```bash
+   dotnet run --project src/TodoList.Api
+   ```
+
+## API Documentation
+
+Once running, open the Scalar UI at:
+
 ```
-## 📖 Documentación con Scalar
-Esta API utiliza Scalar para una experiencia de documentación interactiva y moderna. Una vez que la aplicación esté corriendo, puedes acceder a la interfaz de pruebas en:
+http://localhost:5242/scalar/v1
+```
 
-🔗 URL: http://localhost:XXXX/scalar/v1
-(Reemplaza XXXX por el puerto que asigne .NET)
-
-Características de Scalar en este proyecto:
-Pruebas en vivo: Prueba cada endpoint directamente desde el navegador.
-
-Descarga de Contratos: Puedes descargar el archivo openapi.json desde la interfaz.
-
-Snippets de código: Genera automáticamente el código para consumir la API en múltiples lenguajes (JavaScript, Python, etc.).
+Features: live endpoint testing, code snippets (C#, Python, JS), and OpenAPI spec download.
