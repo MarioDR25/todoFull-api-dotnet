@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TodoList.Application.DTOs;
 using TodoList.Application.Interfaces;
@@ -5,7 +6,8 @@ using TodoList.Application.Interfaces;
 namespace TodoList.Api.Controllers;
 
 [ApiController]
-[Route("todos/[controller]")]
+[Route("api/[controller]")]
+[Authorize]
 public class UsersController(IUserService service) : ControllerBase
 {
     private readonly IUserService _service = service;
@@ -28,24 +30,6 @@ public class UsersController(IUserService service) : ControllerBase
             return NotFound(new { message = $"No se encontró el usuario con Id {id}." });
 
         return Ok(user);
-    }
-
-    [HttpPost]
-    [ProducesResponseType(typeof(UserResponseDto), StatusCodes.Status201Created)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<UserResponseDto>> Create([FromBody] CreateUserDto createDto)
-    {
-        try
-        {
-            var createdUser = await _service.CreateAsync(createDto);
-            return CreatedAtAction(nameof(GetById), new { id = createdUser.Id }, createdUser);
-        }
-        catch (InvalidOperationException ex)
-        {
-            // Email o username duplicado — conflicto de recursos
-            return Conflict(new { message = ex.Message });
-        }
     }
 
     [HttpPut("{id:guid}")]

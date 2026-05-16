@@ -25,7 +25,7 @@ public class TodoItemService( ITodoItemRepository repository, IUserRepository us
     public async Task<TodoItemResponseDto> CreateAsync(CreateTodoItemDto createDto)
     {
         // Validamos que el usuario existe antes de crear la tarea
-        var userExists = await _userRepository.UserExistsAsync(createDto.UserId);
+        var userExists = await _userRepository.ExistsAsync(createDto.UserId);
         if (!userExists)
             throw new InvalidOperationException($"El usuario con Id '{createDto.UserId}' no existe.");
 

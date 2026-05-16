@@ -1,4 +1,5 @@
-using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TodoList.Application.DTOs;
 using TodoList.Application.Interfaces;
@@ -6,29 +7,35 @@ using TodoList.Application.Interfaces;
 namespace TodoList.Api.Controllers;
 
 [ApiController]
-[Route("todos/user/[controller]")]
+[Route("api/[controller]")]
+[Authorize]
 public class TodoItemsController(ITodoItemService service) : ControllerBase
 {
     private readonly ITodoItemService _service = service;
 
+    /// <summary>
+    /// Lee el UserId del claim del token JWT.
+    /// El cliente nunca lo envía — viene firmado por el servidor.
+    /// </summary>
+    private Guid GetUserIdFromToken() =>
+        Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)
+            ?? throw new UnauthorizedAccessException("Token inválido."));
 
-    /// GET api/todoitems?userId={guid}
-    /// Las tareas siempre se filtran por usuario.
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<TodoItemResponseDto>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<TodoItemResponseDto>>> GetAll([FromQuery][Required] Guid userId)
+    public async Task<ActionResult<IEnumerable<TodoItemResponseDto>>> GetAll()
     {
-        var items = await _service.GetAllByUserIdAsync(userId);
+        var items = await _service.GetAllByUserIdAsync(GetUserIdFromToken());
         return Ok(items);
     }
 
-
-    [HttpGet("{id}")]
+    [HttpGet("{id:int}")]
     [ProducesResponseType(typeof(TodoItemResponseDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<TodoItemResponseDto>> GetById(int id, [FromQuery][Required] Guid userId)
+    public async Task<ActionResult<TodoItemResponseDto>> GetById(int id)
     {
-        var item = await _service.GetByIdAsync(id, userId);
+        var item = await _service.GetByIdAsync(id, GetUserIdFromToken());
+
         if (item is null)
             return NotFound(new { message = $"No se encontró la tarea con Id {id}." });
 
@@ -43,9 +50,14 @@ public class TodoItemsController(ITodoItemService service) : ControllerBase
     {
         try
         {
+            // El UserId del DTO se sobreescribe con el del token.
+            // El cliente no puede enviar un UserId diferente al suyo.
+            createDto.UserId = GetUserIdFromToken();
+
             var createdItem = await _service.CreateAsync(createDto);
+
             return CreatedAtAction(nameof(GetById),
-                new { id = createdItem.Id, userId = createdItem.UserId },
+                new { id = createdItem.Id },
                 createdItem);
         }
         catch (InvalidOperationException ex)
@@ -54,28 +66,29 @@ public class TodoItemsController(ITodoItemService service) : ControllerBase
         }
     }
 
-    [HttpPut("{id}")]
+    [HttpPut("{id:int}")]
     [ProducesResponseType(typeof(TodoItemResponseDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<TodoItemResponseDto>> Update(
         int id,
-        [FromQuery][Required] Guid userId,
         [FromBody] UpdateTodoItemDto updateDto)
     {
-        var updatedItem = await _service.UpdateAsync(id, userId, updateDto);
+        var updatedItem = await _service.UpdateAsync(id, GetUserIdFromToken(), updateDto);
+
         if (updatedItem is null)
             return NotFound(new { message = $"No se encontró la tarea con Id {id}." });
 
         return Ok(updatedItem);
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Delete(int id, [FromQuery][Required] Guid userId)
+    public async Task<IActionResult> Delete(int id)
     {
-        var deleted = await _service.DeleteAsync(id, userId);
+        var deleted = await _service.DeleteAsync(id, GetUserIdFromToken());
+
         if (!deleted)
             return NotFound(new { message = $"No se encontró la tarea con Id {id}." });
 

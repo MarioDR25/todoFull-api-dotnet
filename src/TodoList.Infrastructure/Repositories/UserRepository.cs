@@ -17,7 +17,7 @@ public class UserRepository : IUserRepository
     public async Task<IEnumerable<User>> GetAllUsersAsync()
     {
         return await _context.Users
-            .AsNoTracking()            
+            .AsNoTracking()
             .OrderBy(u => u.Username)
             .ToListAsync();
     }
@@ -26,15 +26,22 @@ public class UserRepository : IUserRepository
     {
         return await _context.Users
             .AsNoTracking()
-            .FirstOrDefaultAsync(u => u.Id == id );
+            .FirstOrDefaultAsync(u => u.Id == id);
     }
 
-    
+
     public async Task<User?> GetByUsernameAsync(string username)
     {
         return await _context.Users
             .AsNoTracking()
             .FirstOrDefaultAsync(u => u.Username == username.ToLower());
+    }
+
+    public async Task<User?> GetByEmailAsync(string email)
+    {
+        return await _context.Users
+            .AsNoTracking()
+            .FirstOrDefaultAsync(u => u.Email == email.ToLower());
     }
 
     public async Task<User> AddUserAsync(User user)
@@ -52,7 +59,7 @@ public class UserRepository : IUserRepository
 
     public async Task DeleteUserAsync(Guid id)
     {
-       
+
         var user = await _context.Users.FindAsync(id);
         if (user is not null)
         {
@@ -61,12 +68,24 @@ public class UserRepository : IUserRepository
         }
     }
 
-
-    public async Task<bool> UserExistsAsync(Guid id)
+    public async Task<bool> ExistsAsync(Guid id)
     {
         return await _context.Users
             .AnyAsync(t => t.Id == id );
     }
+
+    public async Task<bool> UserExistsAsync(string username)
+    {
+        return await _context.Users
+            .AnyAsync(t => t.Username == username);
+    }
+
+    public async Task<bool> EmailExistsAsync(string email)
+    {
+        return await _context.Users
+            .AnyAsync(u => u.Email == email);
+    }
+
 }
 
 

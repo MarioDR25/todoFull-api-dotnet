@@ -21,22 +21,6 @@ public class UserService(IUserRepository repository) : IUserService
         return user is null ? null : MapToResponseDto(user);
     }
 
-    public async Task<UserResponseDto> CreateAsync(CreateUserDto createDto)
-    {
-        
-        var user = new User
-        {
-            
-            Id = Guid.NewGuid(),  
-            Username = createDto.Username.ToLower().Trim(),
-            Email = createDto.Email.ToLower().Trim(),
-            PasswordHash = Convert.ToBase64String( System.Text.Encoding.UTF8.GetBytes(createDto.Password)),
-       
-        };
-
-        var createdUser = await _repository.AddUserAsync(user);
-        return MapToResponseDto(createdUser);
-    }
 
     public async Task<UserResponseDto?> UpdateAsync(Guid id, UpdateUserDto updateDto)
     {
@@ -49,9 +33,10 @@ public class UserService(IUserRepository repository) : IUserService
         return MapToResponseDto(user);
     }
 
+    
     public async Task<bool> DeleteAsync(Guid id)
     {
-        if (!await _repository.UserExistsAsync(id)) return false;
+        if (!await _repository.ExistsAsync(id)) return false;
         await _repository.DeleteUserAsync(id);
         return true;
     }
