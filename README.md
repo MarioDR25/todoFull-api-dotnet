@@ -89,4 +89,4 @@ Once running, open the Scalar UI at:
 http://localhost:5242/scalar/v1
 ```
 
-Features: live endpoint testing, code snippets (C#, Python, JS), and OpenAPI spec download.
+
