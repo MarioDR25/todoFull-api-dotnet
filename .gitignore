@@ -1,45 +1,41 @@
-## [ Archivos de Compilación y Binarios ]
+## Build results
 [Bb]in/
 [Oo]bj/
 /build/
 
-## [ Bases de Datos ]
-# Ignora archivos locales de SQLite o logs de MySQL si se guardan en el repo
-
-
-## [ Configuración de Usuario y Herramientas ]
+## IDE and editor files
 .vs/
 .vscode/
-# Nota: Si trabajas solo, puedes subir .vscode/launch.json, 
-# pero generalmente se ignora para no chocar con otros devs.
 .idea/
 *.suo
 *.user
 *.userossc
 *.sln.docstates
 
-## [ Secretos y Variables de Entorno ]
-# ¡IMPORTANTE! Nunca subas tus contraseñas de MySQL
-appsettings.Development.json
-secrets.json
-.env
-
-## [ Paquetes y Caché ]
+## NuGet
 *.nuget.props
 *.nuget.targets
 project.lock.json
-project.assets.json
 .nuget/
+*.nupkg
 
-## [ Sistema Operativo ]
-# Windows
+## Secrets and environment-specific config
+appsettings.*.json
+!appsettings.json
+secrets.json
+.env
+
+## Database local files
+*.db
+*.sqlite
+*.sqlite3
+
+## OS generated files
 Thumbs.db
 ehthumbs.db
 Desktop.ini
-# Mac
 .DS_Store
 
-## [ Logs y Reportes ]
+## Logs and test results
 *.log
 TestResults/
-/TestResults/
