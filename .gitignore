@@ -39,3 +39,4 @@ Desktop.ini
 ## Logs and test results
 *.log
 TestResults/
+appsettings.Development.json
