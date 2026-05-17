@@ -9,7 +9,8 @@ public class TodoItem : BaseEntity<int>
     public bool IsCompleted { get; set; } = false;
     public Guid UserId { get; set; }
     public User? User { get; private set; }
-
+    public TodoItem(){}
+    
 }
 
 
